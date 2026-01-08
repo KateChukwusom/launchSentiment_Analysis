@@ -1,21 +1,20 @@
 from datetime import datetime, timedelta
 from airflow import DAG
-from airflow.operators.python import PythonOperator
+from airflow.providers.standard.operators.python.PythonOperator import PythonOperator
 import sys
 
 # Make your pipeline importable
-sys.path.append("/opt/airflow/airflow-launchsentiment")
+sys.path.append("/opt/airflow/airflow_launchsentiment")
 
-from Ingestion.downloader import download_pageviews
-from Ingestion.extractor import extract_companies
-from Ingestion.transformer import transform_pageviews
-from Ingestion.loader import load_to_mssql
+from ingestion.downloader import download_pageviews
+from ingestion.extractor import extract_companies
+from ingestion.transformer import transform_pageviews
+from ingestion.loader import load_to_mssql
 
 default_args = {
-    "owner": "airflow",
-    "depends_on_past": False,
+    "executor": "LocalExecutor",
     "retries": 1,
-    "retry_delay": timedelta(minutes=5),
+    "retry_delay": timedelta(minutes=2),
 }
 
 with DAG(
@@ -25,25 +24,25 @@ with DAG(
     start_date=datetime(2025, 12, 31),
 ) as dag:
 
-    download_task = PythonOperator(
+    download_data = PythonOperator(
         task_id="download_pageviews",
         python_callable=download_pageviews
     )
 
-    extract_task = PythonOperator(
+    extract_data = PythonOperator(
         task_id="extract_companies",
         python_callable=extract_companies
     )
 
-    transform_task = PythonOperator(
+    transform_data = PythonOperator(
         task_id="transform_data",
         python_callable=transform_data 
     )
 
-    load_task = PythonOperator(
+    load_data = PythonOperator(
         task_id="load_to_mssql",
         python_callable=load_to_mssql
     )
 
     # Set explicit dependencies
-    download_task >> extract_task >> transform_task >> load_task
+    download_data >> extract_data >> transform_data >> load_data
