@@ -7,8 +7,11 @@ import sys
 sys.path.append("/opt/airflow/airflow_launchsentiment")
 
 from ingestion.downloader import download_pageviews
+
 from ingestion.extractor import extract_companies
+
 from ingestion.transformer import transform_pageviews
+
 from ingestion.loader import load_to_mssql
 
 default_args = {
