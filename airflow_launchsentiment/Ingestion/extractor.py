@@ -11,7 +11,7 @@ from utils.file_system import ensure_dir, file_exists
 
 logging.basicConfig(
     level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(message)s"
+    format="%(asctime)s - %(levelname)s - %(message)s
 )
 
 
